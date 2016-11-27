@@ -1,8 +1,9 @@
 Markdown Color Formatter
 =======
 
-A Logging.Formatter instance used to modify the Python Logging Facility to add color and formtatting using a Markdown-like syntax.
-inspired by Mistune_.
+A Logging.Formatter instance used to modify the Python Logging Facility to add color and formatting using a Markdown-like syntax.
+
+Inspired by `Mistune <https://github.com/lepture/mistune>`_.
 
 
 Features
