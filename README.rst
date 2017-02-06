@@ -48,7 +48,7 @@ Render a markdown-like formatted text to the console:
 
 	log = logging.getLogger()
 	log.info('Starting the {{red}}**Markdown** Color Formatter{{red}}')
-	# output: <p>I am using <strong><fonti color="red">Markdown Color Formatter</font></strong></p>
+	# output: Starting the <font color="red"><strong>Markdown</strong> Color Formatter</font>
 
 
 Bugs
