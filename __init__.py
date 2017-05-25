@@ -48,10 +48,10 @@ class MarkdownColorFormatter:
             BLANK = '{{blank}}'
 
             def log_start(self, logger):
-                    logger.info(self.LOG_START)
+                logger.info(self.LOG_START)
 
             def log_blank_line(self, logger):
-                    logger.info(self.BLANK)
+                logger.info(self.BLANK)
 
         class Formatter:
             FORMAT = ("%(asctime)s - [**%(name)s**][%(levelname)s]" " %(message)s " "(**%(filename)s**:%(lineno)d)")
@@ -85,11 +85,11 @@ class MarkdownColorFormatter:
 
                     elif msg.find(MarkdownColorFormatter.LogFunctions.LOG_START) > -1:
                         fmt = '%(message)s'
-                        msg =           '\n\n ##########################################################\n' + \
-                                        '##                                                        ##\n' + \
-                                        '##               {{failed}}ALEXA LOGGING STARTING...{{failed}}                ##\n' + \
-                                        '##                                                        ##\n' + \
-                                        ' ##########################################################\n\n\n\n'
+                        msg = '\n\n ##########################################################\n' + \
+                                '##                                                        ##\n' + \
+                                '##               {{failed}}LOG STARTING...{{failed}}                ##\n' + \
+                                '##                                                        ##\n' + \
+                                ' ##########################################################\n\n\n\n'
                         self._fmt_modified = True
 
                     if self._use_color:
@@ -199,69 +199,71 @@ class MarkdownColorFormatter:
                 return re.compile(r'{{%s}}([\s\S]+?){{%s}}' % (custom, custom))
 
             def _parse(self, text, levels=0, parsing=False):
-                        def parse(text, levels):
-                                for key in self.rules:
-                                        if key in self.colors:
-                                                pattern = getattr(self, key)(key)
 
-                                        else:
-                                                pattern = getattr(self, key)
+                def parse(text, levels):
 
-                                        m = pattern.match(text)
+                    for key in self.rules:
 
-                                        if m is not None:
-                                                if not parsing:
-                                                        self.parsing = []
+                        if key in self.colors:
+                            pattern = getattr(self, key)(key)
 
-                                                if pattern.groups > 0:  # only attributes have more than one group
-                                                        levels += 1
+                        else:
+                            pattern = getattr(self, key)
 
-                                                        if pattern.groups > 1:
-                                                                if m.group(1).find('-') > 2: # shortest color len is 3 ('red')
-                                                                        self._parsing = self._parsing + \
-                                                                            [key, 'bg-' + m.group(1).split('-')[1]]
+                        m = pattern.match(text)
 
-                                                                else:
-                                                                        self._parsing.append(key)
+                        if m is not None:
+                            if not parsing:
+                                self.parsing = []
 
-                                                                self._parse(m.group(2), levels, key)
+                            if pattern.groups > 0:  # only attributes have more than one group
+                                levels += 1
 
-                                                        else:
-                                                                self._parsing.append(key)
-                                                                self._parse(m.group(1), levels, key)
+                                if pattern.groups > 1:
+                                    if m.group(1).find('-') > 2: # shortest color len is 3 ('red')
+                                        self._parsing = self._parsing + [key, 'bg-' + m.group(1).split('-')[1]]
 
-                                                else:  # text only
-                                                        self._output.append({'attributes': list(self._parsing), 'text': m.group(0)})
+                                    else:
+                                        self._parsing.append(key)
 
-                                                return key, m
+                                    self._parse(m.group(2), levels, key)
 
-                                        else:
-                                                continue
+                                else:
+                                    self._parsing.append(key)
+                                    self._parse(m.group(1), levels, key)
 
-                                return False
+                            else:  # text only
+                                self._output.append({'attributes': list(self._parsing), 'text': m.group(0)})
 
-                        while text:
+                            return key, m
 
-				for k,v in MarkdownColorFormatter._CUSTOM.iteritems():
-					pattern = getattr(self, k)(k)
-					m = pattern.match(text)
+                        else:
+                            continue
 
-					if m is not None:
-						text = v % m.group(1) + text[len(m.group(0)):]
+                    return False
 
-                                ret = parse(text, levels)
+                while text:
 
-                                if ret is not False:
-                                        key, m = ret
-                                        text = text[len(m.group(0)):]
-                                        self._parsing = [parsing]
-                                        continue
+                    for k,v in MarkdownColorFormatter._CUSTOM.iteritems():
+    	                pattern = getattr(self, k)(k)
+                        m = pattern.match(text)
 
-                                if text:
-                                        # catch parsing error
-                                        raise RuntimeError('Infinite loop at: %s' % text)
+                        if m is not None:
+                            text = v % m.group(1) + text[len(m.group(0)):]
 
-                        return self._output
+                    ret = parse(text, levels)
+
+                    if ret is not False:
+                        key, m = ret
+                        text = text[len(m.group(0)):]
+                        self._parsing = [parsing]
+                        continue
+
+                    if text:
+                        # catch parsing error
+                        raise RuntimeError('Infinite loop at: %s' % text)
+
+                return self._output
 
 
         def log_hooks(log):
