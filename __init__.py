@@ -184,6 +184,7 @@ class MarkdownColorFormatter:
             def __call__(self, text, text_only=False):
                 self._output = []
                 self._parsing = []
+
                 out = self._parse(text)
                 return self._render(out, text_only)
 
