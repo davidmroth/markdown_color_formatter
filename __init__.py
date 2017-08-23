@@ -2,6 +2,9 @@ import re
 import types
 
 
+#TODO: Fix dot logging name duplciation issue
+#TODO: Add space before and after error and critical logging
+
 class MarkdownColorFormatter:
         _BLACK, _RED, _GREEN, _YELLOW, _BLUE, _MAGENTA, _CYAN, _WHITE = range(8)
 
@@ -170,8 +173,7 @@ class MarkdownColorFormatter:
             strikethrough = re.compile(r'^\~{2}(?=\S)([\s\S]*?\S)\~{2}')  # ~~strikethrough~~
 
             def __init__(self):
-                self.rules = self._merge_array(
-                    self.formats, self.colors)
+                self.rules = self._merge_array(self.formats, self.colors)
 
                 for key, value in MarkdownColorFormatter._CUSTOM.iteritems():
                     setattr(self, key, self._custom_compile)
