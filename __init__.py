@@ -1,3 +1,6 @@
+from future.utils import viewitems
+from past.builtins import basestring
+
 import re
 import types
 
@@ -175,7 +178,7 @@ class MarkdownColorFormatter:
             def __init__(self):
                 self.rules = self._merge_array(self.formats, self.colors)
 
-                for key, value in MarkdownColorFormatter._CUSTOM.iteritems():
+                for key, value in viewitems(MarkdownColorFormatter._CUSTOM):
                     setattr(self, key, self._custom_compile)
 
                 for color in self.colors:
@@ -247,8 +250,8 @@ class MarkdownColorFormatter:
 
                 while text:
 
-                    for k,v in MarkdownColorFormatter._CUSTOM.iteritems():
-    	                pattern = getattr(self, k)(k)
+                    for k,v in viewitems(MarkdownColorFormatter._CUSTOM):
+                        pattern = getattr(self, k)(k)
                         m = pattern.match(text)
 
                         if m is not None:
